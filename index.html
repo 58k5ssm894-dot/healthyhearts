@@ -280,6 +280,8 @@
   .result-panel--done.result-panel--low      .result-score { background: var(--low); }
   .result-panel--done.result-panel--moderate  .result-score { background: var(--moderate); }
   .result-panel--done.result-panel--high      .result-score { background: var(--high); }
+  .result-panel--hide-score .result-score { display: none; }
+  .result-panel--hide-score .result-status__title { font-size: 1.02rem; }
 </style>
 
 <header>
@@ -287,7 +289,7 @@
   <p class="subtitle" id="tool-subtitle"></p>
 </header>
 
-<div class="demo-ribbon">Live preview · DEMO content · not for clinical use</div>
+<div class="demo-ribbon">Educational AUC map · not a complete order set · verify against primary sources</div>
 
 <div class="disclaimer" role="note" id="disclaimer">
   <strong>Not medical advice.</strong>
@@ -322,9 +324,306 @@
 /* ── Content data (mirrors decision/data/tools.js) ─────────────────────────── */
 window.DECISION_TOOLS = [
   {
+    id: "resting-tte-steward",
+    name: "Echo Stewardship",
+    subtitle: "Reserve resting TTE for structure/function; suggest treadmill or other tests when better",
+    source: "2011 Multisociety AUC for Echocardiography; 2019 Multimodality AUC (nonvalvular HD); 2021 AHA/ACC Chest Pain Guideline; 2023 Multimodality AUC for Chronic Coronary Disease. Simplified educational map — not a complete AUC catalog.",
+    demo: true,
+    hideScore: true,
+    disclaimer: "For qualified professionals only. Supplement to clinical judgment, local availability, and institutional protocols. Suggestions are US guideline/AUC-oriented; NICE and local pathways may differ (e.g. CCTA-first). Not a complete AUC lookup and not for unsupervised patient use.",
+    start: "q_primary",
+    nodes: {
+      /* ── Q1: primary clinical question ─────────────────────────────── */
+      q_primary: {
+        type: "question",
+        prompt: "What is the primary clinical question?",
+        help: "Resting TTE answers structure/function. Treadmill and other ischemia tests answer CAD/ischemia. They are not interchangeable.",
+        options: [
+          { label: "Structure / pump / valve / effusion / PH / embolic source / new HF", next: "q_struct" },
+          { label: "Ischemia / CAD (chest pain or equivalent — “rule out blockage”)", next: "q_isch_known" },
+          { label: "Both structure and ischemia concerns", next: "q_both" },
+          { label: "Screening, routine preop, athletic clearance, or no clear cardiac question", next: "q_steward" },
+          { label: "Suspected PE only (echo to confirm PE)", next: "r_pe_pathway" },
+          { label: "Not sure", next: "r_uncertain" }
+        ]
+      },
+
+      /* ── Path A: structure / function ──────────────────────────────── */
+      q_struct: {
+        type: "question",
+        prompt: "Which best fits the structure/function indication?",
+        help: "2011 AUC: appropriate when initial diagnosis, clinical change, or results likely change management. Rarely appropriate for routine testing without change.",
+        options: [
+          { label: "Suspected or known HF / cardiomyopathy / unexplained dyspnea with HF concern", next: "r_tte_hf" },
+          { label: "Symptoms/signs of structural disease (edema, new murmur with suspicion, possible effusion, suspected PH, TIA/stroke embolic workup)", next: "r_tte_structure" },
+          { label: "Abnormal ECG, CXR, or biomarkers suggesting structural disease", next: "r_tte_abn_test" },
+          { label: "Known cardiac disease WITH clinical change, or management depends on echo", next: "r_tte_change" },
+          { label: "Known mild/stable disease — short-interval routine recheck, no change", next: "r_none_surveillance" },
+          { label: "Previously normal TTE and no clinical change", next: "r_none_surveillance" }
+        ]
+      },
+
+      /* ── Path C: both ──────────────────────────────────────────────── */
+      q_both: {
+        type: "question",
+        prompt: "Is there a clear independent structure/function indication?",
+        help: "If yes, reserve resting TTE for that indication and plan a separate ischemia test. If mainly chest pain without structural signs, do not lead with resting TTE.",
+        options: [
+          { label: "Yes — HF, new/changed murmur with suspicion, abnormal biomarkers/ECG for structure, embolic source, etc.", next: "r_tte_plus_ischemia" },
+          { label: "No — mainly ischemia/CAD concern without separate structural indication", next: "q_isch_known" },
+          { label: "Unclear", next: "r_uncertain" }
+        ]
+      },
+
+      /* ── Path B: ischemia ──────────────────────────────────────────── */
+      q_isch_known: {
+        type: "question",
+        prompt: "Does the patient have known CAD?",
+        options: [
+          { label: "Yes — known CAD", next: "q_isch_struct_extra_known" },
+          { label: "No known CAD", next: "q_isch_risk" }
+        ]
+      },
+
+      q_isch_struct_extra_known: {
+        type: "question",
+        prompt: "Any independent reason for structure/function imaging?",
+        help: "HF signs, new murmur with suspicion, known valve change, unexplained ECG suggesting cardiomyopathy, stroke/embolus source, etc.",
+        options: [
+          { label: "Yes — structure/function question as well", next: "r_tte_plus_func" },
+          { label: "No — question is whether symptoms are ischemic", next: "r_func_known_cad" }
+        ]
+      },
+
+      q_isch_risk: {
+        type: "question",
+        prompt: "Which best describes the clinical setting? (coarse buckets — not a formal risk calculator)",
+        help: "2021 AHA/ACC chest pain pathways. High-risk acute ACS is outside this stewardship tool.",
+        options: [
+          { label: "Low-risk stable appearance (e.g. outpatient-style stable chest pain)", next: "q_isch_exercise_low" },
+          { label: "Intermediate or higher risk stable symptoms", next: "q_isch_exercise_int" },
+          { label: "Intermediate-risk acute — ACS evaluated / not ongoing high-risk ACS", next: "q_isch_exercise_int" },
+          { label: "High-risk acute / ongoing ACS concern", next: "r_acs_escalate" }
+        ]
+      },
+
+      q_isch_exercise_low: {
+        type: "question",
+        prompt: "Can the patient exercise, and is the resting ECG interpretable for exercise testing?",
+        help: "Uninterpretable ECG examples: LBBB, ventricular paced rhythm, WPW, digoxin effect, or other patterns that prevent ST-segment interpretation. Need ability to exercise meaningfully (guideline context ≈ ≥5 METs for some pathways).",
+        options: [
+          { label: "Yes — can exercise and ECG is interpretable", next: "q_isch_struct_extra_tm" },
+          { label: "No — cannot exercise safely and/or ECG uninterpretable", next: "q_isch_struct_extra_pharma" }
+        ]
+      },
+
+      q_isch_exercise_int: {
+        type: "question",
+        prompt: "Can the patient exercise, and is the resting ECG interpretable for exercise testing?",
+        help: "For intermediate–high risk without known CAD, CCTA or stress imaging are Class 1. Exercise ECG is only Class 2a when ECG is interpretable and adequate exercise is achievable.",
+        options: [
+          { label: "Yes — can exercise and ECG is interpretable", next: "q_isch_struct_extra_stress" },
+          { label: "No — cannot exercise safely and/or ECG uninterpretable", next: "q_isch_struct_extra_pharma" }
+        ]
+      },
+
+      q_isch_struct_extra_tm: {
+        type: "question",
+        prompt: "Any independent reason for structure/function imaging (not just “rule out CAD”)?",
+        options: [
+          { label: "Yes", next: "r_tte_plus_tm" },
+          { label: "No", next: "r_tm_low" }
+        ]
+      },
+
+      q_isch_struct_extra_stress: {
+        type: "question",
+        prompt: "Any independent reason for structure/function imaging (not just “rule out CAD”)?",
+        options: [
+          { label: "Yes", next: "r_tte_plus_stress" },
+          { label: "No", next: "r_stress_or_ccta" }
+        ]
+      },
+
+      q_isch_struct_extra_pharma: {
+        type: "question",
+        prompt: "Any independent reason for structure/function imaging (not just “rule out CAD”)?",
+        options: [
+          { label: "Yes", next: "r_tte_plus_pharma" },
+          { label: "No", next: "r_pharma_or_ccta" }
+        ]
+      },
+
+      /* ── Path D: screening / stewardship ────────────────────────────── */
+      q_steward: {
+        type: "question",
+        prompt: "Which context best fits?",
+        help: "These are common rarely appropriate resting-TTE themes (2011 AUC inappropriate indications; 2019 athlete screening).",
+        options: [
+          { label: "Asymptomatic ventricular-function screening — no CV symptoms or signs", next: "r_none_screen" },
+          { label: "Routine preoperative evaluation — no CV symptoms", next: "r_none_preop" },
+          { label: "Athlete preparticipation — asymptomatic, normal exam, no family history of inheritable HD", next: "r_none_athlete" },
+          { label: "Athlete or preop WITH symptoms, abnormal exam, or positive family history", next: "q_steward_positive" },
+          { label: "Isolated infrequent ectopy (APCs/VPCs) or isolated asymptomatic sinus bradycardia — no other heart disease", next: "r_none_screen" },
+          { label: "Isolated lightheadedness/presyncope — no other CV symptoms or signs", next: "r_none_presyncope" },
+          { label: "Soft/innocent-sounding murmur without suspicion of valve or structural disease", next: "r_none_murmur" }
+        ]
+      },
+
+      q_steward_positive: {
+        type: "question",
+        prompt: "What is the main concern now that symptoms, exam, or family history are present?",
+        options: [
+          { label: "Structure/function (HF, murmur with suspicion, possible cardiomyopathy, etc.)", next: "r_tte_structure" },
+          { label: "Exertional chest pain / ischemia concern", next: "q_isch_known" },
+          { label: "Both", next: "r_tte_plus_ischemia" }
+        ]
+      },
+
+      /* ── Results: order resting TTE ─────────────────────────────────── */
+      r_tte_hf: {
+        type: "result",
+        title: "Order resting TTE — appropriate use",
+        detail: "Next step: resting transthoracic echocardiogram. Initial evaluation of known or suspected heart failure / cardiomyopathy is highly appropriate (2011 AUC; 2019 multimodality often score 9). Reserve the scarce echo slot for this indication.",
+        severity: "low"
+      },
+      r_tte_structure: {
+        type: "result",
+        title: "Order resting TTE — appropriate use",
+        detail: "Next step: resting TTE. Symptoms or signs of suspected cardiac structural/functional disease (including embolic source evaluation after TIA/stroke when clinically indicated) are appropriate indications (2011 AUC; 2019 multimodality often 8–9). Proceed when results may change management.",
+        severity: "low"
+      },
+      r_tte_abn_test: {
+        type: "result",
+        title: "Order resting TTE — appropriate use",
+        detail: "Next step: resting TTE. Prior concerning testing (ECG, chest radiograph, biomarkers) suggesting cardiac disease is an appropriate indication for resting echo (2011 AUC). Use the study to assess structure and function.",
+        severity: "low"
+      },
+      r_tte_change: {
+        type: "result",
+        title: "Order resting TTE — appropriate use",
+        detail: "Next step: resting TTE. Clinical change or anticipated management impact supports appropriate use (2011 AUC principle: initial diagnosis / change in status / results likely to change care).",
+        severity: "low"
+      },
+      r_tte_plus_ischemia: {
+        type: "result",
+        title: "Order resting TTE — and plan a separate ischemia test",
+        detail: "Next steps: (1) resting TTE for structure/function; (2) separate ischemia evaluation (exercise ECG, stress imaging, or CCTA per risk and local expertise — 2021 AHA/ACC). Do not treat resting TTE as the ischemia test.",
+        severity: "low"
+      },
+      r_tte_plus_func: {
+        type: "result",
+        title: "Order resting TTE — and functional testing for ischemia",
+        detail: "Next steps: (1) resting TTE for the structure/function question; (2) stress imaging (or exercise ECG when appropriate) for ischemic symptoms with known CAD. Resting TTE alone does not risk-stratify ischemia.",
+        severity: "low"
+      },
+      r_tte_plus_tm: {
+        type: "result",
+        title: "Order resting TTE — and treadmill exercise ECG for ischemia",
+        detail: "Next steps: (1) resting TTE for structure/function; (2) treadmill exercise ECG without imaging for low-risk stable ischemia workup when ECG is interpretable and the patient can exercise (2021 AHA/ACC Class 2a). Two different questions — two different tests.",
+        severity: "low"
+      },
+      r_tte_plus_stress: {
+        type: "result",
+        title: "Order resting TTE — and CCTA or stress imaging for ischemia",
+        detail: "Next steps: (1) resting TTE for structure/function; (2) CCTA or stress imaging (stress echo, PET/SPECT MPI, or CMR) for intermediate–high risk ischemia evaluation (2021 AHA/ACC Class 1). Choose modality by local availability and expertise.",
+        severity: "low"
+      },
+      r_tte_plus_pharma: {
+        type: "result",
+        title: "Order resting TTE — and non-exercise ischemia testing",
+        detail: "Next steps: (1) resting TTE for structure/function; (2) pharmacologic stress imaging or CCTA — standalone treadmill ECG is not suitable when the patient cannot exercise or the ECG is uninterpretable (2021 AHA/ACC).",
+        severity: "low"
+      },
+
+      /* ── Results: divert to alternative tests ──────────────────────── */
+      r_tm_low: {
+        type: "result",
+        title: "Not first-line for resting TTE — prefer treadmill exercise ECG",
+        detail: "Next step: exercise ECG (treadmill) without imaging. For low-risk stable chest pain with no known CAD, interpretable ECG, and ability to exercise, exercise testing is reasonable to exclude ischemia and assess capacity (2021 AHA/ACC Class 2a). Resting TTE does not diagnose ischemia — do not use a scarce echo slot for this alone.",
+        severity: "moderate"
+      },
+      r_stress_or_ccta: {
+        type: "result",
+        title: "Not first-line for resting TTE — prefer CCTA or stress imaging",
+        detail: "Next step: CCTA or stress imaging (stress echo, PET/SPECT MPI, or CMR) per local expertise (2021 AHA/ACC Class 1 for intermediate–high risk stable chest pain without known CAD). Exercise ECG is only Class 2a when ECG is interpretable and ≥5 METs is achievable. Resting TTE is not the ischemia test. (NICE CG95 may prefer CCTA earlier — follow local policy.)",
+        severity: "moderate"
+      },
+      r_pharma_or_ccta: {
+        type: "result",
+        title: "Not first-line for resting TTE — prefer pharmacologic stress imaging or CCTA",
+        detail: "Next step: pharmacologic stress imaging or CCTA (local expertise/availability). Standalone treadmill ECG is unsuitable when exercise is not feasible or the resting ECG is uninterpretable for ST analysis (2021 AHA/ACC). Do not order resting TTE solely to “rule out CAD.”",
+        severity: "moderate"
+      },
+      r_func_known_cad: {
+        type: "result",
+        title: "Not first-line for resting TTE — prefer functional testing for ischemia",
+        detail: "Next step: stress imaging to assess whether symptoms are ischemic in known CAD (exercise ECG may substitute in some settings). Resting TTE is not the test for ischemic symptom adjudication unless a separate structure/function question exists.",
+        severity: "moderate"
+      },
+      r_acs_escalate: {
+        type: "result",
+        title: "Escalate — not an outpatient resting-TTE stewardship decision",
+        detail: "Next step: acute coronary syndrome / urgent cardiology pathway per institutional protocol (2021 AHA/ACC high-risk acute presentations often favor invasive angiography). Do not delay ACS care to order a routine resting TTE through this tool.",
+        severity: "high"
+      },
+
+      /* ── Results: no imaging / rarely appropriate ──────────────────── */
+      r_none_screen: {
+        type: "result",
+        title: "Rarely appropriate — no cardiac imaging",
+        detail: "Next step: do not order resting TTE (and do not add a routine treadmill for screening alone). Asymptomatic ventricular-function screening, isolated infrequent ectopy without other heart disease, and isolated asymptomatic sinus bradycardia are classic rarely appropriate echo indications (2011 AUC).",
+        severity: "high"
+      },
+      r_none_surveillance: {
+        type: "result",
+        title: "Rarely appropriate — defer imaging",
+        detail: "Next step: no short-interval resting TTE. Routine surveillance without clinical change (including recheck of previously normal LV function, or short-interval mild/stable disease) is rarely appropriate (2011 AUC). Extend interval per specialty protocol if surveillance is eventually needed.",
+        severity: "high"
+      },
+      r_none_preop: {
+        type: "result",
+        title: "Rarely appropriate for routine resting TTE — use preop pathway",
+        detail: "Next step: do not order routine resting TTE for asymptomatic preoperative patients. Routine perioperative echo without CV symptoms is rarely appropriate (2011 AUC). If preoperative ischemia risk assessment is needed, use your institutional / 2024 multimodality preop AUC pathway — not automatic treadmill for everyone and not echo-by-default.",
+        severity: "high"
+      },
+      r_none_athlete: {
+        type: "result",
+        title: "Rarely appropriate — no imaging for screening alone",
+        detail: "Next step: no resting TTE for preparticipation screening when asymptomatic with normal exam and no family history of inheritable heart disease (2019 multimodality AUC: Rarely Appropriate, score 3). Re-enter this tool if symptoms, exam findings, or family history appear.",
+        severity: "high"
+      },
+      r_none_presyncope: {
+        type: "result",
+        title: "Rarely appropriate — non-echo evaluation first",
+        detail: "Next step: evaluate orthostatic, neurologic, medication, and volume causes; do not lead with resting TTE. Lightheadedness/presyncope without other cardiovascular symptoms or signs is a classic rarely appropriate echo indication (2011 AUC).",
+        severity: "high"
+      },
+      r_none_murmur: {
+        type: "result",
+        title: "Rarely appropriate — clinical follow-up",
+        detail: "Next step: observe clinically; order resting TTE if suspicion for valve or structural disease rises. Murmur evaluation without suspicion of structural disease is rarely appropriate (2011 AUC).",
+        severity: "high"
+      },
+      r_pe_pathway: {
+        type: "result",
+        title: "Rarely appropriate as a PE test — use PE pathway",
+        detail: "Next step: institutional PE diagnostic pathway (e.g. D-dimer, CT pulmonary angiography, or V/Q as appropriate). Resting TTE solely to establish pulmonary embolism is not appropriate. TTE for RV strain in unstable suspected PE is a different, specialty-guided question — not a PE rule-out.",
+        severity: "high"
+      },
+      r_uncertain: {
+        type: "result",
+        title: "Uncertain — clarify the question",
+        detail: "Next step: define whether you need structure/function (resting TTE), ischemia testing (exercise ECG / stress imaging / CCTA), or neither. Consult the full 2011/2019 AUC tables or cardiology when the indication is outside this simplified map. Local availability may change the preferred alternative test.",
+        severity: "moderate"
+      }
+    }
+  },
+
+  {
     id: "demo-branching",
     name: "Sample Branching Assessment",
-    subtitle: "A placeholder to demonstrate the tool — replace with your criteria.",
+    subtitle: "A placeholder to demonstrate the tool engine — not for clinical use.",
     source: "Placeholder content. No clinical validity.",
     demo: true,
     start: "onset",
@@ -400,6 +699,7 @@ window.DECISION_TOOLS = [
     resetBtn:    document.getElementById("reset-btn"),
     app:         document.getElementById("app"),
     panel:       document.getElementById("result-panel"),
+    scoreBox:    document.querySelector(".result-score"),
     scoreValue:  document.getElementById("score-value"),
     resultTitle: document.getElementById("result-title"),
     resultDetail:document.getElementById("result-detail"),
@@ -542,6 +842,9 @@ window.DECISION_TOOLS = [
   }
 
   function renderPanel(flow) {
+    var hideScore = !!(state.tool && state.tool.hideScore);
+    els.panel.classList.toggle("result-panel--hide-score", hideScore);
+    if (els.scoreBox) els.scoreBox.setAttribute("aria-hidden", hideScore ? "true" : "false");
     els.scoreValue.textContent = String(flow.score);
     els.panel.classList.remove("result-panel--low", "result-panel--moderate", "result-panel--high", "result-panel--done");
     if (flow.terminal) {
@@ -564,6 +867,7 @@ window.DECISION_TOOLS = [
     els.disclaimer.textContent = tool.disclaimer || DEFAULT_DISCLAIMER;
     if (tool.source) { els.resultSource.textContent = "Source: " + tool.source; els.resultSource.hidden = false; }
     else els.resultSource.hidden = true;
+    els.panel.classList.toggle("result-panel--hide-score", !!tool.hideScore);
     Array.prototype.forEach.call(els.tabs.children, function (btn) {
       var active = btn.getAttribute("data-tool-id") === tool.id;
       btn.classList.toggle("active", active);
