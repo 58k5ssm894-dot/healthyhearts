@@ -1,0 +1,606 @@
+<title>Clinical Decision Tool</title>
+<link rel="icon" href="data:image/png;base64,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" />
+<style>
+  :root {
+    --accent: #3a3af4;
+    --accent-light: #eeeeff;
+    --bg: #f0f4ff;
+    --card-bg: #ffffff;
+    --text: #1a1a2e;
+    --muted: #5a5a78;
+    --border: #dfe3f5;
+
+    --low: #16a34a;
+    --moderate: #b45309;
+    --high: #be123c;
+
+    --disclaimer-bg: #fff7ed;
+    --disclaimer-color: #7c2d12;
+    --disclaimer-border: #fed7aa;
+    --disclaimer-strong: #9a3412;
+
+    --opt-bg: #fbfcff;
+    --opt-points-bg: #eef1fb;
+    --opt-points-selbg: #ffffff;
+
+    --panel-h: 128px;
+  }
+
+  /* Dark tokens — applied when the OS prefers dark (unless the viewer forces
+     light) and when the viewer's toggle stamps data-theme="dark". */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #12121c;
+      --card-bg: #1c1c2b;
+      --text: #ececf6;
+      --muted: #a0a0c0;
+      --border: #2c2c42;
+      --accent-light: #24243a;
+      --disclaimer-bg: #2a1f14;
+      --disclaimer-color: #fed7aa;
+      --disclaimer-border: #4a3418;
+      --disclaimer-strong: #fdba74;
+      --opt-bg: transparent;
+      --opt-points-bg: #2c2c42;
+      --opt-points-selbg: #12121c;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #12121c;
+    --card-bg: #1c1c2b;
+    --text: #ececf6;
+    --muted: #a0a0c0;
+    --border: #2c2c42;
+    --accent-light: #24243a;
+    --disclaimer-bg: #2a1f14;
+    --disclaimer-color: #fed7aa;
+    --disclaimer-border: #4a3418;
+    --disclaimer-strong: #fdba74;
+    --opt-bg: transparent;
+    --opt-points-bg: #2c2c42;
+    --opt-points-selbg: #12121c;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html { scroll-padding-bottom: calc(var(--panel-h) + 16px); }
+
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    margin: 0;
+    padding: 0 0 calc(var(--panel-h) + env(safe-area-inset-bottom, 0px) + 24px);
+    min-height: 100vh;
+  }
+
+  header {
+    background: var(--accent);
+    color: #fff;
+    padding: 20px 16px 16px;
+    text-align: center;
+  }
+  header h1 { margin: 0; font-size: 1.4rem; font-weight: 700; letter-spacing: -0.01em; }
+  header .subtitle { margin: 6px 0 0; font-size: 0.85rem; opacity: 0.85; }
+
+  .demo-ribbon {
+    background: repeating-linear-gradient(45deg, #f59e0b, #f59e0b 12px, #fbbf24 12px, #fbbf24 24px);
+    color: #3a2405;
+    text-align: center;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 5px 10px;
+  }
+
+  .disclaimer {
+    background: var(--disclaimer-bg);
+    color: var(--disclaimer-color);
+    border-bottom: 1px solid var(--disclaimer-border);
+    padding: 10px 16px;
+    font-size: 0.8rem;
+    line-height: 1.45;
+  }
+  .disclaimer strong { color: var(--disclaimer-strong); }
+
+  .controls {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .tabs { display: flex; gap: 6px; flex-wrap: wrap; flex: 1; }
+  .tab-btn {
+    padding: 6px 14px;
+    border-radius: 99px;
+    border: 2px solid var(--accent);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    background: transparent;
+    color: var(--accent);
+    transition: background 0.12s, color 0.12s;
+  }
+  .tab-btn.active { background: var(--accent); color: #fff; }
+
+  .reset-btn {
+    margin-left: auto;
+    padding: 6px 14px;
+    border-radius: 99px;
+    border: 1.5px solid var(--border);
+    background: var(--card-bg);
+    color: var(--muted);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .reset-btn:hover { color: var(--text); border-color: var(--muted); }
+
+  main {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .empty { color: var(--muted); text-align: center; padding: 40px 0; }
+
+  .q-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 16px 14px;
+    box-shadow: 0 1px 2px rgba(30, 30, 80, 0.04);
+    animation: rise 0.18s ease;
+  }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .q-card, .result-card { animation: none; }
+    * { scroll-behavior: auto !important; }
+  }
+  .q-card__num {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--accent);
+    background: var(--accent-light);
+    padding: 2px 8px;
+    border-radius: 99px;
+    margin-bottom: 8px;
+  }
+  .q-card__prompt { margin: 0 0 4px; font-size: 1.02rem; font-weight: 650; line-height: 1.35; }
+  .q-card__help { margin: 4px 0 12px; font-size: 0.82rem; color: var(--muted); line-height: 1.45; }
+  .q-card__options { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+
+  .opt-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+    min-height: 48px;
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    background: var(--opt-bg);
+    color: var(--text);
+    font-size: 0.95rem;
+    font-weight: 550;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 0.12s, background 0.12s, box-shadow 0.12s;
+  }
+  .opt-btn:hover { border-color: var(--accent); }
+  .opt-btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .opt-btn--selected {
+    border-color: var(--accent);
+    background: var(--accent-light);
+    box-shadow: inset 0 0 0 1px var(--accent);
+  }
+  .opt-btn__label { flex: 1; }
+  .opt-btn__points {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--muted);
+    background: var(--opt-points-bg);
+    padding: 2px 8px;
+    border-radius: 99px;
+  }
+  .opt-btn--selected .opt-btn__points { color: var(--accent); background: var(--opt-points-selbg); }
+
+  .result-card {
+    border: 1px solid var(--border);
+    border-left: 5px solid var(--accent);
+    border-radius: 14px;
+    background: var(--card-bg);
+    padding: 16px;
+    animation: rise 0.18s ease;
+  }
+  .result-card--low      { border-left-color: var(--low); }
+  .result-card--moderate { border-left-color: var(--moderate); }
+  .result-card--high     { border-left-color: var(--high); }
+  .result-card__kicker {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .result-card__title { margin: 4px 0 6px; font-size: 1.15rem; font-weight: 700; }
+  .result-card__detail { margin: 0; font-size: 0.9rem; line-height: 1.5; color: var(--text); }
+
+  .result-panel {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    z-index: 20;
+    background: var(--card-bg);
+    border-top: 1px solid var(--border);
+    box-shadow: 0 -2px 12px rgba(30, 30, 80, 0.08);
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+  }
+  .result-panel__inner {
+    max-width: 640px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .result-score {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 72px;
+    min-height: 60px;
+    border-radius: 12px;
+    background: var(--accent);
+    color: #fff;
+  }
+  .result-score__label { font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.85; }
+  .result-score__value { font-size: 1.7rem; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; }
+
+  .result-status { flex: 1; min-width: 0; }
+  .result-status__title { font-size: 0.98rem; font-weight: 700; }
+  .result-status__detail { font-size: 0.8rem; color: var(--muted); line-height: 1.4; margin-top: 2px; }
+  .result-source { max-width: 640px; margin: 6px auto 0; font-size: 0.7rem; color: var(--muted); }
+
+  .result-panel--done.result-panel--low      .result-score { background: var(--low); }
+  .result-panel--done.result-panel--moderate  .result-score { background: var(--moderate); }
+  .result-panel--done.result-panel--high      .result-score { background: var(--high); }
+</style>
+
+<header>
+  <h1 id="tool-title">Clinical Decision Tool</h1>
+  <p class="subtitle" id="tool-subtitle"></p>
+</header>
+
+<div class="demo-ribbon">Live preview · DEMO content · not for clinical use</div>
+
+<div class="disclaimer" role="note" id="disclaimer">
+  <strong>Not medical advice.</strong>
+  <span id="disclaimer-text">
+    For use by qualified professionals as a supplement to — not a replacement
+    for — clinical judgment. Always verify results against the primary source.
+  </span>
+</div>
+
+<div class="controls">
+  <div class="tabs" id="tabs" aria-label="Available tools"></div>
+  <button class="reset-btn" id="reset-btn" type="button" hidden>Start over</button>
+</div>
+
+<main id="app" aria-live="polite"></main>
+
+<aside class="result-panel" id="result-panel" aria-live="polite">
+  <div class="result-panel__inner">
+    <div class="result-score">
+      <span class="result-score__label">Score</span>
+      <span class="result-score__value" id="score-value">0</span>
+    </div>
+    <div class="result-status" id="result-status">
+      <div class="result-status__title" id="result-title">In progress…</div>
+      <div class="result-status__detail" id="result-detail">Answer the questions above.</div>
+    </div>
+  </div>
+  <p class="result-source" id="result-source" hidden></p>
+</aside>
+
+<script>
+/* ── Content data (mirrors decision/data/tools.js) ─────────────────────────── */
+window.DECISION_TOOLS = [
+  {
+    id: "demo-branching",
+    name: "Sample Branching Assessment",
+    subtitle: "A placeholder to demonstrate the tool — replace with your criteria.",
+    source: "Placeholder content. No clinical validity.",
+    demo: true,
+    start: "onset",
+    nodes: {
+      onset: {
+        type: "question",
+        prompt: "Sample question A — how did the (placeholder) finding begin?",
+        help: "This is demo text only. It illustrates a branch where the next question depends on the answer.",
+        options: [
+          { label: "Suddenly", points: 2, next: "severity" },
+          { label: "Gradually", points: 0, next: "duration" }
+        ]
+      },
+      severity: {
+        type: "question",
+        prompt: "Sample question B — rate the (placeholder) severity.",
+        options: [
+          { label: "Mild", points: 0, next: "modifier" },
+          { label: "Moderate", points: 1, next: "modifier" },
+          { label: "Severe", points: 3, next: "r_urgent" }
+        ]
+      },
+      duration: {
+        type: "question",
+        prompt: "Sample question C — how long has the (placeholder) finding been present?",
+        options: [
+          { label: "Less than a week", points: 1, next: "modifier" },
+          { label: "A week or more", points: 0, next: "modifier" }
+        ]
+      },
+      modifier: {
+        type: "question",
+        prompt: "Sample question D — any (placeholder) aggravating factor present?",
+        help: "This option routes to the scored terminal, so the outcome comes from the score bands below.",
+        options: [
+          { label: "Yes", points: 1 },
+          { label: "No", points: 0 }
+        ]
+      },
+      r_urgent: {
+        type: "result",
+        title: "Path-based outcome (DEMO)",
+        detail: "This explicit result node was reached directly by the path taken (severe branch), independent of the score bands. Replace with a real outcome.",
+        severity: "high"
+      }
+    },
+    resultBands: [
+      { min: 0, max: 1, title: "Band 1 (DEMO)", detail: "Placeholder low-score interpretation. Replace with your guidance.", severity: "low" },
+      { min: 2, max: 3, title: "Band 2 (DEMO)", detail: "Placeholder mid-score interpretation. Replace with your guidance.", severity: "moderate" },
+      { min: 4, max: 99, title: "Band 3 (DEMO)", detail: "Placeholder high-score interpretation. Replace with your guidance.", severity: "high" }
+    ]
+  }
+];
+</script>
+
+<script>
+/* ── Engine (mirrors decision/app.js) ──────────────────────────────────────── */
+(function () {
+  "use strict";
+
+  var DEFAULT_DISCLAIMER =
+    "For use by qualified professionals as a supplement to — not a replacement " +
+    "for — clinical judgment. Always verify results against the primary source.";
+
+  var tools = window.DECISION_TOOLS || [];
+  var state = { tool: null, path: [] };
+
+  var els = {
+    title:       document.getElementById("tool-title"),
+    subtitle:    document.getElementById("tool-subtitle"),
+    disclaimer:  document.getElementById("disclaimer-text"),
+    tabs:        document.getElementById("tabs"),
+    resetBtn:    document.getElementById("reset-btn"),
+    app:         document.getElementById("app"),
+    panel:       document.getElementById("result-panel"),
+    scoreValue:  document.getElementById("score-value"),
+    resultTitle: document.getElementById("result-title"),
+    resultDetail:document.getElementById("result-detail"),
+    resultSource:document.getElementById("result-source")
+  };
+
+  function computeFlow() {
+    var tool = state.tool;
+    var steps = [];
+    var score = 0;
+    var terminal = null;
+    var nodeId = tool.start;
+    var pathIndex = 0;
+
+    while (nodeId) {
+      var node = tool.nodes[nodeId];
+      if (!node) break;
+      if (node.type === "result") { terminal = resultFromNode(node); break; }
+
+      var sel = state.path[pathIndex];
+      var selectedIndex = sel && sel.nodeId === nodeId ? sel.optionIndex : -1;
+      steps.push({ nodeId: nodeId, node: node, selectedIndex: selectedIndex });
+      if (selectedIndex < 0) { nodeId = null; break; }
+
+      var opt = node.options[selectedIndex];
+      score += Number(opt.points) || 0;
+      pathIndex++;
+
+      if (!opt.next) { terminal = resultFromBands(tool, score); nodeId = null; }
+      else { nodeId = opt.next; }
+    }
+    return { steps: steps, score: score, terminal: terminal };
+  }
+
+  function resultFromNode(node) {
+    return { kind: "result", title: node.title || "Result", detail: node.detail || "", severity: node.severity || null };
+  }
+  function resultFromBands(tool, score) {
+    var bands = tool.resultBands || [];
+    for (var i = 0; i < bands.length; i++) {
+      var b = bands[i];
+      if (score >= b.min && score <= b.max) {
+        return { kind: "band", title: b.title || "Result", detail: b.detail || "", severity: b.severity || null };
+      }
+    }
+    return { kind: "band", title: "Score: " + score, detail: "No result band is defined for this score.", severity: null };
+  }
+
+  function render() {
+    var flow = computeFlow();
+    renderQuestions(flow.steps, flow.terminal);
+    renderPanel(flow);
+    els.resetBtn.hidden = state.path.length === 0;
+  }
+
+  function renderQuestions(steps, terminal) {
+    els.app.innerHTML = "";
+    steps.forEach(function (step, i) { els.app.appendChild(buildQuestionCard(step, i)); });
+    if (terminal) els.app.appendChild(buildTerminalCard(terminal));
+  }
+
+  function buildQuestionCard(step, index) {
+    var card = document.createElement("section");
+    card.className = "q-card";
+    card.setAttribute("data-node", step.nodeId);
+
+    var num = document.createElement("div");
+    num.className = "q-card__num";
+    num.textContent = "Q" + (index + 1);
+    card.appendChild(num);
+
+    var prompt = document.createElement("h2");
+    prompt.className = "q-card__prompt";
+    prompt.textContent = step.node.prompt;
+    card.appendChild(prompt);
+
+    if (step.node.help) {
+      var help = document.createElement("p");
+      help.className = "q-card__help";
+      help.textContent = step.node.help;
+      card.appendChild(help);
+    }
+
+    var opts = document.createElement("div");
+    opts.className = "q-card__options";
+    step.node.options.forEach(function (opt, oi) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "opt-btn" + (oi === step.selectedIndex ? " opt-btn--selected" : "");
+      btn.setAttribute("aria-pressed", oi === step.selectedIndex ? "true" : "false");
+
+      var label = document.createElement("span");
+      label.className = "opt-btn__label";
+      label.textContent = opt.label;
+      btn.appendChild(label);
+
+      var pts = Number(opt.points) || 0;
+      if (pts !== 0) {
+        var badge = document.createElement("span");
+        badge.className = "opt-btn__points";
+        badge.textContent = (pts > 0 ? "+" : "") + pts;
+        btn.appendChild(badge);
+      }
+      btn.addEventListener("click", function () { selectOption(index, step.nodeId, oi); });
+      opts.appendChild(btn);
+    });
+    card.appendChild(opts);
+    return card;
+  }
+
+  function buildTerminalCard(terminal) {
+    var card = document.createElement("section");
+    card.className = "result-card" + (terminal.severity ? " result-card--" + terminal.severity : "");
+    var kicker = document.createElement("div");
+    kicker.className = "result-card__kicker";
+    kicker.textContent = "Result";
+    card.appendChild(kicker);
+    var title = document.createElement("h2");
+    title.className = "result-card__title";
+    title.textContent = terminal.title;
+    card.appendChild(title);
+    if (terminal.detail) {
+      var detail = document.createElement("p");
+      detail.className = "result-card__detail";
+      detail.textContent = terminal.detail;
+      card.appendChild(detail);
+    }
+    return card;
+  }
+
+  function selectOption(index, nodeId, optionIndex) {
+    state.path = state.path.slice(0, index);
+    state.path.push({ nodeId: nodeId, optionIndex: optionIndex });
+    render();
+    requestAnimationFrame(function () {
+      var cards = els.app.children;
+      var target = cards[index + 1];
+      if (target && target.scrollIntoView) target.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    });
+  }
+
+  function renderPanel(flow) {
+    els.scoreValue.textContent = String(flow.score);
+    els.panel.classList.remove("result-panel--low", "result-panel--moderate", "result-panel--high", "result-panel--done");
+    if (flow.terminal) {
+      els.panel.classList.add("result-panel--done");
+      if (flow.terminal.severity) els.panel.classList.add("result-panel--" + flow.terminal.severity);
+      els.resultTitle.textContent = flow.terminal.title;
+      els.resultDetail.textContent = flow.terminal.detail || "";
+    } else {
+      els.resultTitle.textContent = "In progress…";
+      els.resultDetail.textContent = state.path.length ? "Answer the next question to continue." : "Answer the questions above.";
+    }
+  }
+
+  function selectTool(tool) {
+    state.tool = tool;
+    state.path = [];
+    els.title.textContent = tool.name || "Clinical Decision Tool";
+    els.subtitle.textContent = tool.subtitle || "";
+    els.subtitle.hidden = !tool.subtitle;
+    els.disclaimer.textContent = tool.disclaimer || DEFAULT_DISCLAIMER;
+    if (tool.source) { els.resultSource.textContent = "Source: " + tool.source; els.resultSource.hidden = false; }
+    else els.resultSource.hidden = true;
+    Array.prototype.forEach.call(els.tabs.children, function (btn) {
+      var active = btn.getAttribute("data-tool-id") === tool.id;
+      btn.classList.toggle("active", active);
+      btn.setAttribute("aria-pressed", active ? "true" : "false");
+    });
+    render();
+  }
+
+  function buildTabs() {
+    els.tabs.innerHTML = "";
+    if (tools.length <= 1) { els.tabs.hidden = true; return; }
+    els.tabs.hidden = false;
+    tools.forEach(function (tool) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "tab-btn";
+      btn.setAttribute("data-tool-id", tool.id);
+      btn.textContent = tool.name + (tool.demo ? " (DEMO)" : "");
+      btn.addEventListener("click", function () { selectTool(tool); });
+      els.tabs.appendChild(btn);
+    });
+  }
+
+  function init() {
+    if (!tools.length) {
+      els.app.innerHTML = '<p class="empty">No decision tools are configured.</p>';
+      els.panel.hidden = true;
+      return;
+    }
+    buildTabs();
+    els.resetBtn.addEventListener("click", function () {
+      if (state.tool) { state.path = []; render(); }
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+    selectTool(tools[0]);
+  }
+
+  init();
+})();
+</script>
