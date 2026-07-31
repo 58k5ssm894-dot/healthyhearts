@@ -1,24 +1,16 @@
 # healthyhearts
 
-Educational clinical decision support for **urgent care and primary care** clinicians ordering (or deferring) resting echocardiography when echo capacity is limited.
+Outpatient clinical decision support for **urgent care and primary care** clinicians ordering (or deferring) resting echocardiography when echo capacity is limited.
 
-## Tools
+## Tools (tabs)
 
 ### Ambulatory Echo Stewardship (default)
 
-Safety gate → presentation-based path → recommendation with:
-
-- **At this encounter**
-- **Next test / pathway** (resting TTE, exercise ECG, stress imaging/CCTA, PE pathway, or no imaging)
-- **Avoid**
-- **Rationale** (AUC / guideline anchors)
-- **If clinical picture changes**
-
-Collegial CDS tone for physicians and APPs — not patient-facing copy.
+Safety gate → presentation → short recommendation (**Next** / **Avoid**). Presentation-based path for the outpatient office.
 
 ### Echo Stewardship (AUC v1)
 
-Prior decision tree kept for comparison (also frozen on branch `archive/v1-auc-stewardship` / tag `v1-auc-stewardship`).
+Comparison tree: structure vs ischemia branches (pre–ambulatory restructure). Same compact question/result style for side-by-side comparison.
 
 ## Sources
 
